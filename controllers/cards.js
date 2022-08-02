@@ -1,24 +1,31 @@
 const Card = require('../models/cards');
 
 module.exports.createCard = (req, res) => {
-  const {name, link} = req.body;
+  const { name, link } = req.body;
 
-  Card.create({name, link, req.user._id})
+  Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send(card))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+        return;
+      }
+
+      res.status(500).send({ message: `Произошла ошибка ${err}` });
+    });
 };
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-  .then((cards) => res.send(cards))
-  .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .then((cards) => res.send(cards))
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.delete(req.params.cardId)
     .then((card) => res.send(card))
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
-}
+};
 
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
@@ -26,8 +33,8 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-  .then((card) => res.send(card))
-  .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .then((card) => res.send(card))
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -36,7 +43,6 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-  .then((card) => res.send(card))
-  .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
+    .then((card) => res.send(card))
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err}` }));
 };
-
