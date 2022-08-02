@@ -1,5 +1,7 @@
 const User = require('../models/user');
 
+const NotFoundUser = require('../errors/not-found-user');
+
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
@@ -16,7 +18,10 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params.userId)
+  const { userId } = req.params;
+
+  User.findById(userId)
+    .orFail(() => new NotFoundUser('Пользователь не найден'))
     .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
 };
