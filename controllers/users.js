@@ -24,10 +24,13 @@ module.exports.getUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundUser('Пользователь не найден');
     })
-    .then((user) => res.send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
-      next(err);
-      // res.status(500).send({ message: `Произошла ошибка ${err.name}` })
+      if (err.statusCode === 404) {
+        res.status(404).send({ message: `Произошла ошибка ${err.message}` });
+      } else {
+        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      }
     });
 };
 
