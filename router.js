@@ -1,7 +1,12 @@
 const router = require('express').Router();
 
-const { getUser, createUser, getAllUsers, updateUser, updateAvatar } = require('./controllers/users');
-const { createCard, getCards, deleteCard, likeCard, dislikeCard } = require('./controllers/cards');
+const {
+  getUser, createUser, getAllUsers, updateUser, updateAvatar,
+} = require('./controllers/users');
+
+const {
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
+} = require('./controllers/cards');
 
 router.get('/users/:userId', getUser); /* возвращает пользователя по userId */
 router.get('/users', getAllUsers); /* возвращает всех пользователей */
