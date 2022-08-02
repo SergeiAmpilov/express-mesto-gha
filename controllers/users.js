@@ -21,10 +21,12 @@ module.exports.getUser = (req, res, next) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .orFail(() => new NotFoundUser('Пользователь не найден'))
+    .orFail(() => {
+      throw new NotFoundUser('Пользователь не найден');
+    })
     .then((user) => res.send(user))
-    .catch(() => {
-      next();
+    .catch((err) => {
+      next(err);
       // res.status(500).send({ message: `Произошла ошибка ${err.name}` })
     });
 };
