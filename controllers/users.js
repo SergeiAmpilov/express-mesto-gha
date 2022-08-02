@@ -17,7 +17,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res, next) => {
+module.exports.getUser = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
@@ -26,11 +26,17 @@ module.exports.getUser = (req, res, next) => {
     })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.statusCode === 404) {
+      if (err.name === 'NoFoundUser') {
         res.status(404).send({ message: `Произошла ошибка ${err.message}` });
-      } else {
-        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+        return;
       }
+
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Не найден пользователь по указанному id' });
+        return;
+      }
+
+      res.status(500).send({ message: `Произошла ошибка ${err.name}` });
     });
 };
 
