@@ -32,7 +32,7 @@ module.exports.getUser = (req, res) => {
       }
 
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Не найден пользователь по указанному id' });
+        res.status(400).send({ message: 'Не найден пользователь по указанному id' });
         return;
       }
 
