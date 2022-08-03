@@ -4,8 +4,8 @@ const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Name is required'],
-    minlength: [2, 'Too short. Must be at least 2, got {VALUE}'],
-    maxlength: [30, 'Too long. Must be max 30, got {VALUE}'],
+    minlength: [2, 'Too short Name. Must be at least 2, got {VALUE}'],
+    maxlength: [30, 'Too long Name. Must be max 30, got {VALUE}'],
   },
   link: {
     type: String,
