@@ -35,6 +35,12 @@ module.exports.deleteCard = (req, res) => {
         res.status(400).send({ message: 'Не найдена карточка по указанному id' });
         return;
       }
+
+      if (err.name === 'NoFoundCard') {
+        res.status(404).send({ message: err.message });
+        return;
+      }
+
       res.status(500).send({ message: `Произошла ошибка ${err.name}` });
     });
 };
