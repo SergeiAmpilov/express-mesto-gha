@@ -26,7 +26,7 @@ app.use('*', (req, res) => {
     throw new NotFoundError('Страница не найдена');
   } catch (err) {
     if (err.name === 'NoFoundUser') {
-      res.status(404).send({ message: `Произошла ошибка ${err.message}` });
+      res.status(err.statusCode).send({ message: `Произошла ошибка ${err.message}` });
     }
   }
 });
