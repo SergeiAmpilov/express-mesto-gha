@@ -24,8 +24,19 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.delete(req.params.cardId)
-    .then((card) => res.send(card))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundCard('не найдена карточка с указанным id');
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Не найдена карточка по указанному id' });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+    });
 };
 
 module.exports.likeCard = (req, res) => {
