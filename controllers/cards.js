@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const NotFoundCard = require('../errors/not-found-card');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -29,10 +30,20 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundCard('не найдена карточка с указанным id');
+      }
+      res.status(200).send(card);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Не найдена карточка по указанному id' });
+        return;
+      }
+
+      if (err.name === 'NoFoundCard') {
+        res.status(404).send({ message: err.message });
         return;
       }
 
