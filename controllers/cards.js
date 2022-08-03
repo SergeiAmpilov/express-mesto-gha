@@ -57,10 +57,20 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundCard('не найдена карточка с указанным id');
+      }
+      res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Не найдена карточка по указанному id' });
+        return;
+      }
+
+      if (err.name === 'NoFoundCard') {
+        res.status(404).send({ message: err.message });
         return;
       }
 
