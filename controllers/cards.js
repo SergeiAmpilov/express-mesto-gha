@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const NotFoundCard = require('../errors/not-found-card');
+const NotFoundError = require('../errors/not-found-error');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -26,7 +26,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundCard('не найдена карточка с указанным id');
+        throw new NotFoundError('не найдена карточка с указанным id');
       }
       res.send(card);
     })
@@ -36,8 +36,8 @@ module.exports.deleteCard = (req, res) => {
         return;
       }
 
-      if (err.name === 'NoFoundCard') {
-        res.status(404).send({ message: err.message });
+      if (err.name === 'NoFoundError') {
+        res.status(err.statusCode).send({ message: err.message });
         return;
       }
 
@@ -49,7 +49,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        throw new NotFoundCard('не найдена карточка с указанным id');
+        throw new NotFoundError('не найдена карточка с указанным id');
       }
       res.status(200).send(card);
     })
@@ -59,8 +59,8 @@ module.exports.likeCard = (req, res) => {
         return;
       }
 
-      if (err.name === 'NoFoundCard') {
-        res.status(404).send({ message: err.message });
+      if (err.name === 'NoFoundError') {
+        res.status(err.statusCode).send({ message: err.message });
         return;
       }
 
@@ -76,7 +76,7 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundCard('не найдена карточка с указанным id');
+        throw new NotFoundError('не найдена карточка с указанным id');
       }
       res.send(card);
     })
@@ -86,8 +86,8 @@ module.exports.dislikeCard = (req, res) => {
         return;
       }
 
-      if (err.name === 'NoFoundCard') {
-        res.status(404).send({ message: err.message });
+      if (err.name === 'NoFoundError') {
+        res.status(err.statusCode).send({ message: err.message });
         return;
       }
 

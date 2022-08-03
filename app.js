@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const NotFoundError = require('./errors/not-found-user');
+const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
 
@@ -25,7 +25,7 @@ app.use('*', (req, res) => {
   try {
     throw new NotFoundError('Страница не найдена');
   } catch (err) {
-    if (err.name === 'NoFoundUser') {
+    if (err.name === 'NoFoundError') {
       res.status(err.statusCode).send({ message: `Произошла ошибка ${err.message}` });
     }
   }
