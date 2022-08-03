@@ -13,14 +13,14 @@ module.exports.createCard = (req, res) => {
         return;
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => res.status(COMMON_ERROR_CODE).send({ message: `Произошла ошибка ${err.name}` }));
+    .catch(() => res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -42,7 +42,7 @@ module.exports.deleteCard = (req, res) => {
         return;
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -65,7 +65,7 @@ module.exports.likeCard = (req, res) => {
         return;
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -92,6 +92,6 @@ module.exports.dislikeCard = (req, res) => {
         return;
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };

@@ -1,19 +1,20 @@
 const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-error');
+const { COMMON_ERROR_CODE, DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE } = require('../errors/error-codes');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
         return;
       }
 
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -24,26 +25,26 @@ module.exports.getUser = (req, res) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NoFoundError') {
-        res.status(err.statusCode).send({ message: `Произошла ошибка ${err.message}` });
+        res.status(err.statusCode).send({ message: 'Произошла ошибка' });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не найден пользователь по указанному id' });
+        res.status(DATA_ERROR_CODE).send({ message: 'Не найден пользователь по указанному id' });
         return;
       }
 
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
+    .catch(() => res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.updateUser = (req, res) => {
@@ -53,16 +54,16 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Не найден пользователь по указанному id' });
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Не найден пользователь по указанному id' });
         return;
       }
 
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -73,15 +74,15 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Не найден пользователь по указанному id' });
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Не найден пользователь по указанному id' });
         return;
       }
 
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
 };
