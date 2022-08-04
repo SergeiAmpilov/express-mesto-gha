@@ -56,6 +56,11 @@ module.exports.updateUser = (req, res) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err.name === 'NoFoundError') {
+        res.status(err.statusCode).send({ message: 'Произошла ошибка' });
+        return;
+      }
+
       if (err.name === 'ValidationError') {
         res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
         return;
@@ -79,6 +84,11 @@ module.exports.updateAvatar = (req, res) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err.name === 'NoFoundError') {
+        res.status(err.statusCode).send({ message: 'Произошла ошибка' });
+        return;
+      }
+
       if (err.name === 'ValidationError') {
         res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
         return;
