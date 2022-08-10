@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
+const NotFoundError = require('../errors/not-found-error');
+const BadUserError = require('../errors/bad-user-error');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -30,5 +33,23 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
   },
 });
+
+userSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new BadUserError('Неверный емайл или пароль');
+          }
+
+          return user;
+        });
+    });
+};
 
 module.exports = mongoose.model('user', userSchema);

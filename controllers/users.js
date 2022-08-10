@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-error');
+// const BadUserError = require('../errors/bad-user-error');
 const {
   COMMON_ERROR_CODE, DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE, MONGO_ERROR_CODE,
 } = require('../errors/error-codes');
@@ -113,4 +115,17 @@ module.exports.updateAvatar = (req, res) => {
 
       res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
     });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res
+        .cookie('jwt', token, { maxAge: 3600000, httpOnly: true })
+        .end();
+    })
+    .catch((err) => res.status(err.statusCode).send({ message: err.message }));
 };
