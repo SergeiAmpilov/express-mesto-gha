@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-error');
-const { COMMON_ERROR_CODE, DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE } = require('../errors/error-codes');
+const {
+  COMMON_ERROR_CODE, DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE, MONGO_ERROR_CODE,
+} = require('../errors/error-codes');
 
 module.exports.createUser = (req, res) => {
   const {
@@ -18,6 +20,10 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
         return;
+      }
+
+      if (err.name === 'MongoServerError') {
+        res.status(MONGO_ERROR_CODE).send({ message: 'Ошибка базы данных' });
       }
 
       res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
