@@ -129,3 +129,23 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => res.status(err.statusCode).send({ message: err.message }));
 };
+
+module.exports.getUserInfo = (req, res) => {
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь с id не найден');
+      }
+      res.status(200).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Не найден пользователь' });
+      }
+    });
+};
