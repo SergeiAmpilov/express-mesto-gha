@@ -6,6 +6,7 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -16,8 +17,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/signin', login);
 app.post('/signup', createUser);
 
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
+app.use('/users', auth, userRouter);
+app.use('/cards', auth, cardRouter);
 app.use('*', (req, res) => {
   try {
     throw new NotFoundError('Страница не найдена');
