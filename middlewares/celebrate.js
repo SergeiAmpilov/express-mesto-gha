@@ -20,7 +20,7 @@ const checkSignUp = celebrate({
 
 const checkUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum(),
+    userId: Joi.string().alphanum().length(24),
   }),
 });
 
@@ -46,7 +46,9 @@ const checkCardPost = celebrate({
 
 const checkCardId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum(),
+    cardId: Joi.string().alphanum().length(24),
+  }).messages({
+    'string.length': 'Некорректный id карточки',
   }),
 });
 
