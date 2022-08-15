@@ -3,12 +3,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-error');
-// const BadUserError = require('../errors/bad-user-error');
-const {
-  COMMON_ERROR_CODE, DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE, MONGO_ERROR_CODE,
-} = require('../errors/error-codes');
+const DataError = require('../errors/data-error');
+const BadUserError = require('../errors/bad-user-error');
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -20,19 +18,18 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
-        return;
+        next(new DataError('Переданы некорректные данные'));
       }
 
       if (err.name === 'MongoServerError') {
-        res.status(MONGO_ERROR_CODE).send({ message: 'Ошибка базы данных' });
+        next(new BadUserError('Ошибка базы данных'));
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   const { userId } = req.params;
 
   User.findById(userId)
@@ -42,26 +39,24 @@ module.exports.getUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NoFoundError') {
-        res.status(err.statusCode).send({ message: 'Произошла ошибка' });
-        return;
+        next(new NotFoundError('Произошла ошибка'));
       }
 
       if (err.name === 'CastError') {
-        res.status(DATA_ERROR_CODE).send({ message: 'Не найден пользователь по указанному id' });
-        return;
+        next(new DataError('Не найден пользователь по указанному id'));
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
@@ -71,25 +66,22 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NoFoundError') {
-        res.status(err.statusCode).send({ message: 'Произошла ошибка' });
-        return;
+        next(new NotFoundError('Не найден пользователь'));
       }
 
       if (err.name === 'ValidationError') {
-        res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
-        return;
+        next(new DataError('Переданы некорректные данные'));
       }
 
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Не найден пользователь по указанному id' });
-        return;
+        next(new NotFoundError('Не найден пользователь по указанному id'));
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
@@ -99,25 +91,22 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NoFoundError') {
-        res.status(err.statusCode).send({ message: 'Произошла ошибка' });
-        return;
+        next(new NotFoundError('Произошла ошибка'));
       }
 
       if (err.name === 'ValidationError') {
-        res.status(DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
-        return;
+        next(new DataError('Переданы некорректные данные'));
       }
 
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Не найден пользователь по указанному id' });
-        return;
+        next(new NotFoundError('Не найден пользователь по указанному id'));
       }
 
-      res.status(COMMON_ERROR_CODE).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -127,10 +116,10 @@ module.exports.login = (req, res) => {
         .cookie('jwt', token, { maxAge: 3600000, httpOnly: true })
         .end();
     })
-    .catch((err) => res.status(err.statusCode).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.getUserInfo = (req, res) => {
+module.exports.getUserInfo = (req, res, next) => {
   const userId = req.user._id;
 
   User.findById(userId)
@@ -145,7 +134,9 @@ module.exports.getUserInfo = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Не найден пользователь' });
+        next(new NotFoundError('Не найден пользователь по указанному id'));
       }
+
+      next(err);
     });
 };
