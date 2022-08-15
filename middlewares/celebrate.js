@@ -18,6 +18,47 @@ const checkSignUp = celebrate({
   }),
 });
 
+const checkUserId = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().alphanum(),
+  }),
+});
+
+const checkUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+  }),
+});
+
+const checkUserAvatar = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required().pattern(regexVal),
+  }),
+});
+
+const checkCardPost = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(regexVal),
+  }),
+});
+
+const checkCardId = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().alphanum(),
+  })
+    .messages({
+      'string.length': 'Некорректный id карточки',
+    }),
+});
+
 module.exports = {
-  checkSignIn, checkSignUp,
+  checkSignIn,
+  checkSignUp,
+  checkUserId,
+  checkUserUpdate,
+  checkUserAvatar,
+  checkCardPost,
+  checkCardId,
 };

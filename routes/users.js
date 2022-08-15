@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { checkUserId, checkUserUpdate, checkUserAvatar } = require('../middlewares/celebrate');
 
 const {
   getUser, getAllUsers, updateUser, updateAvatar, getUserInfo,
@@ -6,8 +7,8 @@ const {
 
 router.get('/', getAllUsers); /* возвращает всех пользователей */
 router.get('/me', getUserInfo); /* получить информацию о пользователей */
-router.get('/:userId', getUser); /* возвращает пользователя по userId */
-router.patch('/me', updateUser); /* обновляет профиль */
-router.patch('/me/avatar', updateAvatar); /* обновляет аватар */
+router.get('/:userId', checkUserId, getUser); /* возвращает пользователя по userId */
+router.patch('/me', checkUserUpdate, updateUser); /* обновляет профиль */
+router.patch('/me/avatar', checkUserAvatar, updateAvatar); /* обновляет аватар */
 
 module.exports = router;
