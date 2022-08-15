@@ -128,7 +128,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  const userId = req.user.payload;
+  const userId = req.user._id;
 
   User.findById(userId)
     .orFail(() => {
@@ -138,7 +138,6 @@ module.exports.getUserInfo = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь с id не найден');
       }
-      // res.status(200).send({ data: user });
       res.status(200).send(user);
     })
     .catch((err) => {
