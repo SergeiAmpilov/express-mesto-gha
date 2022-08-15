@@ -10,17 +10,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: [2, 'Too short Name. Must be at least 2, got {VALUE}'],
     maxlength: [30, 'Too long Name. Must be max 30, got {VALUE}'],
-    defaulf: 'Жак-Ив Кусто',
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: [2, 'Too short About. Must be at least 2, got {VALUE}'],
     maxlength: [30, 'Too long About. Must be max 30, got {VALUE}'],
-    defaulf: 'Исследователь',
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
-    defaulf: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (avatar) => regexVal.test(avatar),
       message: 'Введите корректный URL',
