@@ -1,7 +1,1 @@
-module.exports.validateUrl = (url) => {
-  const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
-  if (regex.test(url)) {
-    return url;
-  }
-  throw new Error('Invalid url');
-};
+module.exports.regexVal = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
