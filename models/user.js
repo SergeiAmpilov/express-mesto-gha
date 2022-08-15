@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const NotFoundError = require('../errors/not-found-error');
 const BadUserError = require('../errors/bad-user-error');
+const validateUrl = require('../functions/validate-url');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -20,7 +21,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     defaulf: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: [validator.isURL, 'Enter correct url'],
+    validate: [validateUrl, 'Enter correct url'],
   },
   email: {
     type: String,
