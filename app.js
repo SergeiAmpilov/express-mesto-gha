@@ -8,6 +8,7 @@ const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 const auth = require('./middlewares/auth');
+const validateUrl = require('./functions/validate-url');
 
 const { PORT = 3000 } = process.env;
 
@@ -27,7 +28,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().custom(validateUrl, 'custom validation'),
   }),
 }), createUser);
 
