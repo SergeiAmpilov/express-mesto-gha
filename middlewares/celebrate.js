@@ -47,10 +47,7 @@ const checkCardPost = celebrate({
 const checkCardId = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().alphanum(),
-  })
-    .messages({
-      'string.length': 'Некорректный id карточки',
-    }),
+  }),
 });
 
 module.exports = {
