@@ -20,7 +20,7 @@ const checkSignUp = celebrate({
 
 const checkUserId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().alphanum(),
+    userId: Joi.string().alphanum(),
   }),
 });
 
