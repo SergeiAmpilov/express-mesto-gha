@@ -122,7 +122,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res
         .cookie('jwt', token, { maxAge: 3600000, httpOnly: true })
-        .end();
+        .send({ message: 'Авотризация успешно выполнена' });
     })
     .catch(next);
 };
@@ -138,7 +138,8 @@ module.exports.getUserInfo = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь с id не найден');
       }
-      res.status(200).send({ data: user });
+      // res.status(200).send({ data: user });
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
