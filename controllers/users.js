@@ -4,7 +4,8 @@ const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-error');
 const DataError = require('../errors/data-error');
-const BadUserError = require('../errors/bad-user-error');
+// const BadUserError = require('../errors/bad-user-error');
+const ExistError = require('../errors/exist-error');
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -28,8 +29,8 @@ module.exports.createUser = (req, res, next) => {
         next(new DataError('Переданы некорректные данные'));
       }
 
-      if (err.name === 'MongoServerError') {
-        next(new BadUserError('Ошибка базы данных'));
+      if (err.name === 'MongoServerError' && err.code === 11000) {
+        next(new ExistError('Такой пользователь уже существует'));
       }
 
       next(err);
