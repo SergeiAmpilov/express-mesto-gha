@@ -128,7 +128,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  const userId = req.user._id;
+  const userId = req.user.payload;
 
   User.findById(userId)
     .orFail(() => {
