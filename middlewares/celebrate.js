@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const { regexVal } = require('../functions/validate-url');
+const { regexVal, checkIsCorrectId } = require('../functions/validate-url');
 
 const checkSignIn = celebrate({
   body: Joi.object().keys({
@@ -20,7 +20,9 @@ const checkSignUp = celebrate({
 
 const checkUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().custom(checkIsCorrectId, 'custom id validation'),
+  }).messages({
+    'invalid.id': 'Некорректный id пользователя',
   }),
 });
 
@@ -46,9 +48,9 @@ const checkCardPost = celebrate({
 
 const checkCardId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().custom(checkIsCorrectId, 'custom id validation'),
   }).messages({
-    'string.length': 'Некорректный id карточки',
+    'invalid.id': 'Некорректный id карточки',
   }),
 });
 
