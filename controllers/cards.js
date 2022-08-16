@@ -29,14 +29,12 @@ module.exports.deleteCard = (req, res, next) => {
       throw new NotFoundError('Карточка с указанным id не найдена');
     })
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка с указанным id не найдена');
-      }
       if (card.owner._id.toString() !== req.user._id.toString()) {
         throw new ForbiddenError('Вы не можете удалить чужую карточку');
       }
-      card.remove();
-      res.status(200).send({ data: card, message: 'Карточка успешно удалена' });
+      card.remove()
+        .then(() => res.status(200).send({ data: card, message: 'Карточка успешно удалена' }))
+        .catch((err) => next(err));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
