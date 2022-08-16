@@ -11,6 +11,7 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new DataError('Переданы некорректные данные'));
+        return;
       }
 
       next(err);
@@ -39,10 +40,7 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new DataError('Не найдена карточка по указанному id'));
-      }
-
-      if (err.name === 'NoFoundError') {
-        next(new NotFoundError('Карточка с указанным id не найдена'));
+        return;
       }
 
       next(err);
@@ -60,10 +58,7 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new DataError('Не найдена карточка по указанному id'));
-      }
-
-      if (err.name === 'NoFoundError') {
-        next(new NotFoundError('Карточка с указанным id не найдена'));
+        return;
       }
 
       next(err);
@@ -85,10 +80,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new DataError('Не найдена карточка по указанному id'));
-      }
-
-      if (err.name === 'NoFoundError') {
-        next(new NotFoundError('Карточка с указанным id не найдена'));
+        return;
       }
 
       next(err);

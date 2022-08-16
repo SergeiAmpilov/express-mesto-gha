@@ -27,10 +27,12 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new DataError('Переданы некорректные данные'));
+        return;
       }
 
       if (err.name === 'MongoServerError' && err.code === 11000) {
         next(new ExistError('Такой пользователь уже существует'));
+        return;
       }
 
       next(err);
@@ -46,12 +48,9 @@ module.exports.getUser = (req, res, next) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'NoFoundError') {
-        next(new NotFoundError('Произошла ошибка'));
-      }
-
       if (err.name === 'CastError') {
         next(new DataError('Не найден пользователь по указанному id'));
+        return;
       }
 
       next(err);
@@ -73,16 +72,14 @@ module.exports.updateUser = (req, res, next) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'NoFoundError') {
-        next(new NotFoundError('Не найден пользователь'));
-      }
-
       if (err.name === 'ValidationError') {
         next(new DataError('Переданы некорректные данные'));
+        return;
       }
 
       if (err.name === 'CastError') {
         next(new NotFoundError('Не найден пользователь по указанному id'));
+        return;
       }
 
       next(err);
@@ -98,16 +95,14 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'NoFoundError') {
-        next(new NotFoundError('Произошла ошибка'));
-      }
-
       if (err.name === 'ValidationError') {
         next(new DataError('Переданы некорректные данные'));
+        return;
       }
 
       if (err.name === 'CastError') {
         next(new NotFoundError('Не найден пользователь по указанному id'));
+        return;
       }
 
       next(err);
@@ -134,15 +129,11 @@ module.exports.getUserInfo = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с id не найден');
-      }
-      res.status(200).send(user);
-    })
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new NotFoundError('Не найден пользователь по указанному id'));
+        return;
       }
 
       next(err);
