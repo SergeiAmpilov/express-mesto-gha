@@ -7,10 +7,9 @@ const { errors } = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const NotFoundError = require('./errors/not-found-error');
 const auth = require('./middlewares/auth');
 const { checkSignIn, checkSignUp } = require('./middlewares/celebrate');
-const { processError } = require('./middlewares/error');
+const { processError, notFoundRequest } = require('./middlewares/error');
 
 const { PORT = 3000 } = process.env;
 
@@ -25,7 +24,7 @@ app.post('/signup', checkSignUp, createUser);
 app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
-app.use('*', (req, res, next) => next(new NotFoundError('Страница не найдена')));
+app.use('*', notFoundRequest);
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
