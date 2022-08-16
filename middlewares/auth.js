@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
     next(new BadUserError('Необходима авторизация..'));
+    return true;
   }
 
   req.user = payload;
