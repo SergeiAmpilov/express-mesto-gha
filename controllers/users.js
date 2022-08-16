@@ -4,7 +4,6 @@ const User = require('../models/user');
 
 const NotFoundError = require('../errors/not-found-error');
 const DataError = require('../errors/data-error');
-// const BadUserError = require('../errors/bad-user-error');
 const ExistError = require('../errors/exist-error');
 
 module.exports.createUser = (req, res, next) => {
@@ -116,7 +115,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res
-        .cookie('jwt', token, { maxAge: 3600000, httpOnly: true })
+        .cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true })
         .send({ message: 'Авотризация успешно выполнена' });
     })
     .catch(next);
@@ -132,7 +131,7 @@ module.exports.getUserInfo = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFoundError('Не найден пользователь по указанному id'));
+        next(new DataError('Не найден пользователь по указанному id'));
         return;
       }
 
